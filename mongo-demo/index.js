@@ -74,4 +74,9 @@ async function getCourses() {
     
 }
 
-getCourses();
+async function updateCourse(id) {
+    
+}
+
+
+updateCourse();
