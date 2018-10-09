@@ -66,8 +66,10 @@ async function getCourses() {
     .limit(pageSize)
     .sort({name: 1})
     .select({name: 1, tags: 1});
+
     //Count
     //.count()
+    
     console.log(courses);
     
 }
