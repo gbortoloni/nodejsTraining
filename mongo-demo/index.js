@@ -6,11 +6,45 @@ mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true })
 
 
 const couseSchema = new mongoose.Schema({
-    name: String,
+    name: { 
+        type: String, 
+        required: true,
+        minlength: 3,
+        maxlength: 50
+        // match: /regular expression/
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network'],
+        lowercase: true,
+        trim: true
+        // uppercase: true
+    },
     author: String,
-    tags: [String],
+    tags: {
+        type: Array,
+        validate: {
+            isAsync: true,
+            validator: function(v, callback) {
+                setTimeout(() => {
+                    const result = v && v.length > 0;
+                    callback(result)
+                }, 4000);
+            },
+            message: 'A course should have at least one tag.'
+        }
+    },
     date: { type: Date, default: Date.now},
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: { 
+        type: Number,
+        required: function() { return this.isPublished; },
+        min: 0,
+        max: 1000,
+        get: v => Math.round(v),
+        set: v => Math.round(v)
+    }
 });
 
 const Course = mongoose.model('Course', couseSchema);
@@ -19,12 +53,21 @@ async function createCourse() {
     const course = new Course({
         name: 'Angular Course',
         author: 'giuliano',
+        category: 'web',
         tags: ['angular', 'frontend'],
-        isPublished: true
+        isPublished: true,
+        price: 15.8
     });
     
-    const result = await course.save();
-    console.log(result);
+    try {
+        const result = await course.save();
+        console.log(result);
+    }
+    catch(ex) {
+        for (field in ex.errors) {
+            console.log(ex.errors[field].message);
+        }
+    }
 }
 
 async function getCourses() {
@@ -113,4 +156,4 @@ async function removeCourse(id) {
 }
 
 
-removeCourse('5bbdd557b24c152ce83a7a44');
+createCourse();
