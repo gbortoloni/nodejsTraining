@@ -17,14 +17,14 @@ router.post('/', async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    let costumer = new Costumer({
+    const costumer = new Costumer({
         isGold: req.body.isGold,
         name: req.body.name,
         phone: req.body.phone
     });
 
     try {
-        costumer = await costumer.save();
+        await costumer.save();
         res.send(costumer);
     }
     catch(ex) {

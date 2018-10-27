@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-Joi.objectId = require('joi-objectid')(Joi);
 const Joi = require('joi');
 
 
