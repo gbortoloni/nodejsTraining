@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const {Rental, validate} = require('../models/rentals');
 const {Costumer} = require('../models/costumers');
 const {Movie} = require('../models/movies');
@@ -8,18 +9,18 @@ const router = express.Router();
 
 Fawn.init(mongoose);
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
     const rentals = await Rental.find().sort('-dateOut');
     res.send(rentals);
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
     const rental = await Rental.findById(req.params.id).sort('-dateOut');
     if (!rental) return res.status(404).send('The rental with the give ID was not found.');
     res.send(rental);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
